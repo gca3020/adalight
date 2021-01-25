@@ -16,8 +16,8 @@ func (s *Strip) Length() int {
 	return s.length
 }
 
-// SetRGB sets a specific pixel `i` to a given color.NRGBA color value
-func (s *Strip) SetRGB(i int, rgb color.NRGBA) {
+// SetRGB sets a specific pixel `i` to a given color.RGBA color value
+func (s *Strip) SetRGB(i int, rgb color.RGBA) {
 	if i < 0 || i > s.length {
 		return
 	}
@@ -28,12 +28,12 @@ func (s *Strip) SetRGB(i int, rgb color.NRGBA) {
 
 // Set sets a specific pixel `i` to a given color value
 func (s *Strip) Set(i int, c color.Color) {
-	rgb := color.NRGBAModel.Convert(c).(color.NRGBA)
+	rgb := color.RGBAModel.Convert(c).(color.RGBA)
 	s.SetRGB(i, rgb)
 }
 
-// SetAllRGB sets all of the pixels on the strip to the given color.NRGBA value
-func (s *Strip) SetAllRGB(rgb color.NRGBA) {
+// SetAllRGB sets all of the pixels on the strip to the given color.RGBA value
+func (s *Strip) SetAllRGB(rgb color.RGBA) {
 	for i := 0; i < s.length; i++ {
 		s.SetRGB(i, rgb)
 	}
@@ -41,7 +41,7 @@ func (s *Strip) SetAllRGB(rgb color.NRGBA) {
 
 // SetAll sets all of the pixels on the strip to the given color.Color value
 func (s *Strip) SetAll(c color.Color) {
-	rgb := color.NRGBAModel.Convert(c).(color.NRGBA)
+	rgb := color.RGBAModel.Convert(c).(color.RGBA)
 	s.SetAllRGB(rgb)
 }
 

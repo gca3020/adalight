@@ -32,12 +32,7 @@ func (f *Flash) Frame(num int) bool {
 		f.strip.SetAll(f.color)
 		return false
 	} else {
-		f.strip.SetAllRGB(color.NRGBA{
-			R: 0,
-			G: 0,
-			B: 0,
-			A: 0,
-		})
+		f.strip.SetAllRGB(color.RGBA{})
 		return true
 	}
 }

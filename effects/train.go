@@ -18,7 +18,7 @@ func NewTrain(c color.Color, r int) (f *Train) {
 }
 
 // Init initializes this Effect, passing it the Strip
-func (t *Train) Init(s *adalight.Strip, fps int) string {
+func (t *Train) Init(s *adalight.Strip, _ int) string {
 	t.strip = s
 	return "Train"
 }
@@ -26,7 +26,7 @@ func (t *Train) Init(s *adalight.Strip, fps int) string {
 // Frame populates the pixels in the strip passed during initialization
 func (t *Train) Frame(num int) bool {
 	// Set the strip to black
-	t.strip.SetAllRGB(color.NRGBA{})
+	t.strip.SetAllRGB(color.RGBA{})
 
 	// Light up the single pixel
 	if num < t.repeats*t.strip.Length() {
