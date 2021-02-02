@@ -1,7 +1,6 @@
 package adalight
 
 import (
-	"fmt"
 	"github.com/tarm/serial"
 	"log"
 	"time"
@@ -17,7 +16,6 @@ type Controller struct {
 // New creates and returns a new Strip to use
 func New(port string, baud int, ledCount int) *Controller {
 	c := &Controller{&serial.Config{Name: port, Baud: baud}, newStrip(ledCount), estimateFps(ledCount, baud)}
-	fmt.Printf("%v\n", c)
 	return c
 }
 
@@ -27,12 +25,16 @@ func (c *Controller) Strip() *Strip {
 }
 
 // Run runs a given Effect
-func (c *Controller) Run(e Effect) {
+func (c *Controller) Run(e Effect) error {
 	port, err := serial.OpenPort(c.portcfg)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	defer port.Close()
+	defer func() {
+		if ferr := port.Close(); ferr != nil {
+			err = ferr
+		}
+	}()
 
 	// Initialize the Effect and Frame Time param
 	effectName := e.Init(c.strip, c.fps)
@@ -45,7 +47,6 @@ func (c *Controller) Run(e Effect) {
 	for f := 0; ; f++ {
 		// Get the next frame from the effect
 		done := e.Frame(f)
-
 		t = t.Add(fd)
 
 		// Wait for the timer
@@ -53,12 +54,10 @@ func (c *Controller) Run(e Effect) {
 
 		// Write the header and then the pixels
 		if _, err := port.Write(hdr); err != nil {
-			log.Println(err)
-			break
+			return err
 		}
 		if _, err := port.Write(c.strip.pixels); err != nil {
-			log.Println(err)
-			break
+			return err
 		}
 
 		// If the Effect reports that it is done, break out of the after writing the final frame
@@ -66,6 +65,7 @@ func (c *Controller) Run(e Effect) {
 			break
 		}
 	}
+	return nil
 }
 
 func buildHeader(cnt int) []byte {
